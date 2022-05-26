@@ -97,6 +97,13 @@ async function run() {
                 res.status(500).send({ message: 'server error' })
             }
         })
+         // delete
+         app.delete(`/inventory/:id`, async (req, res) => {
+            const { id } = req.params
+            const filter = { _id: ObjectId(id) }
+            const itemDelete = await collection.deleteOne(filter)
+            res.send(itemDelete)
+        })
 
     } finally {
 
