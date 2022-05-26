@@ -50,7 +50,16 @@ async function run() {
                 res.status(500).send({ message: 'server error' })
             }
         })
-        
+        app.get('/recent', async (req, res) => {
+            const query = {}
+            const cursor = collection.find(query).sort({ _id: -1 }).limit(3)
+            const result = await cursor.toArray()
+            if (result) {
+                res.status(200).send(result)
+            } else {
+                res.status(500).send({ message: 'server error' })
+            }
+        })
 
 
     } finally {
