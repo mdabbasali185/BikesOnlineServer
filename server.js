@@ -75,6 +75,17 @@ async function run() {
 
 
         })
+         // get 1
+         app.get(`/inventory/:id`, async (req, res) => {
+            const { id } = req.params
+            const filter = { _id: ObjectId(id) }
+            const result = await collection.findOne(filter)
+            if (result) {
+                res.status(200).send(result)
+            } else {
+                res.status(500).send({ message: 'server error' })
+            }
+        })
 
     } finally {
 
