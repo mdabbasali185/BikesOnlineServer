@@ -75,8 +75,8 @@ async function run() {
 
 
         })
-         // get 1
-         app.get(`/inventory/:id`, async (req, res) => {
+        // get 1
+        app.get(`/inventory/:id`, async (req, res) => {
             const { id } = req.params
             const filter = { _id: ObjectId(id) }
             const result = await collection.findOne(filter)
@@ -86,8 +86,8 @@ async function run() {
                 res.status(500).send({ message: 'server error' })
             }
         })
-         // get 1
-         app.get(`/inventory/:id`, async (req, res) => {
+        // get 1
+        app.get(`/inventory/:id`, async (req, res) => {
             const { id } = req.params
             const filter = { _id: ObjectId(id) }
             const result = await collection.findOne(filter)
@@ -97,21 +97,27 @@ async function run() {
                 res.status(500).send({ message: 'server error' })
             }
         })
-         // delete
-         app.delete(`/inventory/:id`, async (req, res) => {
+        // delete
+        app.delete(`/inventory/:id`, async (req, res) => {
             const { id } = req.params
             const filter = { _id: ObjectId(id) }
             const itemDelete = await collection.deleteOne(filter)
             res.send(itemDelete)
         })
-         // update quantity
-         app.put(`/inventory/:id`, async (req, res) => {
+        // update quantity
+        app.put(`/inventory/:id`, async (req, res) => {
             const { id } = req.params
             const quantity = req.body.updatedQuantity
             const filter = { _id: ObjectId(id) }
             const updatedQuantity = { $set: { quantity } }
             const itemUpdated = await collection.updateOne(filter, updatedQuantity)
             res.send(itemUpdated)
+        })
+        // jwt token
+        app.post('/jwt-generator', async (req, res) => {
+            const email = req.body.email
+            const token = jwt.sign({ email }, process.env.TOKEN_SECRETE);
+            res.send(token)
         })
 
 
