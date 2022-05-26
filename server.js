@@ -61,6 +61,20 @@ async function run() {
             }
         })
 
+        // post inventory
+        app.post('/inventories', async (req, res) => {
+
+            const { image, name, price, quantity, supplier, description, email } = req.body
+            const newInventory = { image, name, price, quantity, supplier, description, email }
+            const insert = await collection.insertOne(newInventory)
+            if (insert) {
+                res.status(200).send(insert)
+            }
+
+
+
+
+        })
 
     } finally {
 
