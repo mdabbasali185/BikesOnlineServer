@@ -104,6 +104,16 @@ async function run() {
             const itemDelete = await collection.deleteOne(filter)
             res.send(itemDelete)
         })
+         // update quantity
+         app.put(`/inventory/:id`, async (req, res) => {
+            const { id } = req.params
+            const quantity = req.body.updatedQuantity
+            const filter = { _id: ObjectId(id) }
+            const updatedQuantity = { $set: { quantity } }
+            const itemUpdated = await collection.updateOne(filter, updatedQuantity)
+            res.send(itemUpdated)
+        })
+
 
     } finally {
 
