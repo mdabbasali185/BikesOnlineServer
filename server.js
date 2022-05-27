@@ -37,7 +37,10 @@ async function run() {
     try {
         await client.connect();
         console.log('data base connected');
-        const collection = client.db("inventory").collection("products");
+        const productCollection = client.db("bikesOnline").collection("products");
+        const userCollection = client.db("bikesOnline").collection("user");
+        const reviewCollection = client.db("bikesOnline").collection("review");
+        const orderCollection = client.db("bikesOnline").collection("order");
 
         app.get('/inventories', async (req, res) => {
             const limit = req.query.limit || 100
