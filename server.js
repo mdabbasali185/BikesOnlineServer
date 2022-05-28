@@ -16,7 +16,6 @@ app.use(express.json())
 
 const jwtVerify = (req, res, next) => {
     const token = req.headers.authorization
-
     jwt.verify(token, process.env.TOKEN_SECRETE, function (err, decoded) {
         if (err) {
             return res.status(403).send({ message: "token not verify" })
@@ -26,6 +25,12 @@ const jwtVerify = (req, res, next) => {
     });
 
 }
+app.get('/jwt-decoded', jwtVerify, (req, res) => {
+    const decoded = req.decoded
+
+    res.send(decoded)
+    console.log(decoded)
+})
 
 
 // const mongo db
@@ -119,7 +124,9 @@ async function run() {
         // jwt token
         app.post('/jwt-generator', async (req, res) => {
             const email = req.body.email
-            const token = jwt.sign({ email }, process.env.TOKEN_SECRETE);
+            const result = await userCollection.findOne({ email })
+            console.log(result)
+            const token = jwt.sign({ email, role: result.role || "user" }, process.env.TOKEN_SECRETE);
             res.send(token)
         })
 
