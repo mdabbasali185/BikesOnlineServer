@@ -45,7 +45,7 @@ async function run() {
         app.get('/inventories', async (req, res) => {
             const limit = req.query.limit || 100
             const query = {}
-            const cursor = collection.find(query)
+            const cursor = productCollection.find(query)
             const result = await cursor.limit(parseInt(limit)).toArray()
             if (result) {
                 res.status(200).send(result)
@@ -55,7 +55,7 @@ async function run() {
         })
         app.get('/recent', async (req, res) => {
             const query = {}
-            const cursor = collection.find(query).sort({ _id: -1 }).limit(3)
+            const cursor = productCollection.find(query).sort({ _id: -1 }).limit(3)
             const result = await cursor.toArray()
             if (result) {
                 res.status(200).send(result)
@@ -69,7 +69,7 @@ async function run() {
 
             const { image, name, price, quantity, supplier, description, email } = req.body
             const newInventory = { image, name, price, quantity, supplier, description, email }
-            const insert = await collection.insertOne(newInventory)
+            const insert = await productCollection.insertOne(newInventory)
             if (insert) {
                 res.status(200).send(insert)
             }
@@ -82,7 +82,7 @@ async function run() {
         app.get(`/inventory/:id`, async (req, res) => {
             const { id } = req.params
             const filter = { _id: ObjectId(id) }
-            const result = await collection.findOne(filter)
+            const result = await productCollection.findOne(filter)
             if (result) {
                 res.status(200).send(result)
             } else {
@@ -93,7 +93,7 @@ async function run() {
         app.get(`/inventory/:id`, async (req, res) => {
             const { id } = req.params
             const filter = { _id: ObjectId(id) }
-            const result = await collection.findOne(filter)
+            const result = await productCollection.findOne(filter)
             if (result) {
                 res.status(200).send(result)
             } else {
@@ -104,7 +104,7 @@ async function run() {
         app.delete(`/inventory/:id`, async (req, res) => {
             const { id } = req.params
             const filter = { _id: ObjectId(id) }
-            const itemDelete = await collection.deleteOne(filter)
+            const itemDelete = await productCollection.deleteOne(filter)
             res.send(itemDelete)
         })
         // update quantity
@@ -113,7 +113,7 @@ async function run() {
             const quantity = req.body.updatedQuantity
             const filter = { _id: ObjectId(id) }
             const updatedQuantity = { $set: { quantity } }
-            const itemUpdated = await collection.updateOne(filter, updatedQuantity)
+            const itemUpdated = await productCollection.updateOne(filter, updatedQuantity)
             res.send(itemUpdated)
         })
         // jwt token
@@ -123,7 +123,22 @@ async function run() {
             res.send(token)
         })
 
+        //===================================== user============================
+        app.put(`/user`, async (req, res) => {
+           
+            const email = req.body.email
+            
+            const filter = { email }
+            const updated = { $set: { email } }
+            const itemUpdated = await userCollection.updateOne(filter, updated,{upsert:true})
+            res.send(itemUpdated)
+        })
+        app.get(`/users`, async (req, res) => {
+            const result = await userCollection.find().toArray()
+            res.send(result)
+        })
 
+        
     } finally {
 
     }
