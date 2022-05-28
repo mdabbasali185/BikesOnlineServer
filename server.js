@@ -143,6 +143,14 @@ async function run() {
             const result = await userCollection.deleteOne({ _id: ObjectId(id) })
             res.send(result)
         })
+        // admin
+
+        app.put(`/user/:id`, async (req, res) => {
+            const updated={$set:{role:"admin"}}
+            const id = req.params.id
+            const result = await userCollection.updateOne({ _id: ObjectId(id) },updated,{upsert:true})
+            res.send(result)
+        })
 
 
     } finally {
