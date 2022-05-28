@@ -146,9 +146,28 @@ async function run() {
         // admin
 
         app.put(`/user/:id`, async (req, res) => {
-            const updated={$set:{role:"admin"}}
+            const updated = { $set: { role: "admin" } }
             const id = req.params.id
-            const result = await userCollection.updateOne({ _id: ObjectId(id) },updated,{upsert:true})
+            const result = await userCollection.updateOne({ _id: ObjectId(id) }, updated, { upsert: true })
+            res.send(result)
+        })
+
+        // ==================review=======================
+
+        app.post('/review', async (req, res) => {
+
+            const { review, name, email } = req.body
+            const newReview = { name, review, email }
+            const insert = await productCollection.insertOne(newReview)
+            if (insert) {
+                res.status(200).send(insert)
+            }
+
+
+        })
+
+        app.get(`/review`, async (req, res) => {
+            const result = await reviewCollection.find().toArray()
             res.send(result)
         })
 
