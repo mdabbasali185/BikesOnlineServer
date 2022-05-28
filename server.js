@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config()
+require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const stripe = require("stripe");
 const jwt = require('jsonwebtoken');
 
 
@@ -178,6 +179,42 @@ async function run() {
             const result = await reviewCollection.find().sort({ _id: -1 }).limit(parseInt(limit)).toArray()
             res.send(result)
         })
+        // ==============order=================================
+
+        app.get('/orders', async (req, res) => {
+
+            const query = {}
+            const cursor = orderCollection.find(query)
+            const result = await cursor.toArray()
+            res.status(200).send(result)
+
+        })
+        app.post('/orders', async (req, res) => {
+            const result = await orderCollection.insertOne(req.body)
+            res.send(result)
+
+        })
+
+
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id
+            const query = {}
+            const result = await orderCollection.deleteOne({ _id: ObjectId(id) })
+            res.status(200).send(result)
+
+        })
+
+
+
+
+
+
+
+
+
+
+
+
         // payment
         app.post('/payment-intent', async (req, res) => {
             const { price } = req.body
