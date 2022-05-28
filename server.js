@@ -42,7 +42,7 @@ async function run() {
         const reviewCollection = client.db("bikesOnline").collection("review");
         const orderCollection = client.db("bikesOnline").collection("order");
 
-        app.get('/inventories', async (req, res) => {
+        app.get('/products', async (req, res) => {
             const limit = req.query.limit || 100
             const query = {}
             const cursor = productCollection.find(query)
@@ -65,10 +65,10 @@ async function run() {
         })
 
         // post inventory
-        app.post('/inventories', async (req, res) => {
+        app.post('/products', async (req, res) => {
 
             const { image, name, price, quantity, supplier, description, email } = req.body
-            const newInventory = { image, name, price, quantity, supplier, description, email }
+            const newInventory = { image, name, price: parseInt(quantity), quantity: parseInt(quantity), supplier, description, email, limit: 50 }
             const insert = await productCollection.insertOne(newInventory)
             if (insert) {
                 res.status(200).send(insert)
@@ -79,7 +79,7 @@ async function run() {
 
         })
         // get 1
-        app.get(`/inventory/:id`, async (req, res) => {
+        app.get(`/product/:id`, async (req, res) => {
             const { id } = req.params
             const filter = { _id: ObjectId(id) }
             const result = await productCollection.findOne(filter)
@@ -90,7 +90,7 @@ async function run() {
             }
         })
         // get 1
-        app.get(`/inventory/:id`, async (req, res) => {
+        app.get(`/product/:id`, async (req, res) => {
             const { id } = req.params
             const filter = { _id: ObjectId(id) }
             const result = await productCollection.findOne(filter)
@@ -101,14 +101,14 @@ async function run() {
             }
         })
         // delete
-        app.delete(`/inventory/:id`, async (req, res) => {
+        app.delete(`/product/:id`, async (req, res) => {
             const { id } = req.params
             const filter = { _id: ObjectId(id) }
             const itemDelete = await productCollection.deleteOne(filter)
             res.send(itemDelete)
         })
         // update quantity
-        app.put(`/inventory/:id`, async (req, res) => {
+        app.put(`/product/:id`, async (req, res) => {
             const { id } = req.params
             const quantity = req.body.updatedQuantity
             const filter = { _id: ObjectId(id) }
@@ -156,9 +156,9 @@ async function run() {
 
         app.post('/review', async (req, res) => {
 
-            const { review, name, email } = req.body
-            const newReview = { name, review, email }
-            const insert = await productCollection.insertOne(newReview)
+            const { review, userName, email } = req.body
+            const newReview = { userName, review, email }
+            const insert = await reviewCollection.insertOne(newReview)
             if (insert) {
                 res.status(200).send(insert)
             }
@@ -167,7 +167,7 @@ async function run() {
         })
 
         app.get(`/review`, async (req, res) => {
-            const result = await reviewCollection.find().toArray()
+            const result = await reviewCollection.find().sort({ _id: -1 }).toArray()
             res.send(result)
         })
 
