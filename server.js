@@ -125,12 +125,12 @@ async function run() {
 
         //===================================== user============================
         app.put(`/user`, async (req, res) => {
-           
+
             const email = req.body.email
-            
+
             const filter = { email }
             const updated = { $set: { email } }
-            const itemUpdated = await userCollection.updateOne(filter, updated,{upsert:true})
+            const itemUpdated = await userCollection.updateOne(filter, updated, { upsert: true })
             res.send(itemUpdated)
         })
         app.get(`/users`, async (req, res) => {
@@ -138,7 +138,13 @@ async function run() {
             res.send(result)
         })
 
-        
+        app.delete(`/user/:id`, async (req, res) => {
+            const id = req.params.id
+            const result = await userCollection.deleteOne({ _id: ObjectId(id) })
+            res.send(result)
+        })
+
+
     } finally {
 
     }
