@@ -174,10 +174,24 @@ async function run() {
         })
 
         app.get(`/review`, async (req, res) => {
-            const result = await reviewCollection.find().sort({ _id: -1 }).toArray()
+            const limit = req.query.limit || 100
+            const result = await reviewCollection.find().sort({ _id: -1 }).limit(parseInt(limit)).toArray()
             res.send(result)
         })
-
+        // payment
+        app.post('/payment-intent', async (req, res) => {
+            const { price } = req.body
+            if (price > 999999) {
+                return res.status(501).send({ message: 'Amount must be no more than $999,999.99' })
+            }
+            const amount = parseFloat(price) * 100;
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: parseInt(amount),
+                currency: "usd",
+                payment_method_types: ['card']
+            });
+            res.send({ clientSecret: paymentIntent.client_secret })
+        })
 
     } finally {
 
