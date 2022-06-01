@@ -12,7 +12,7 @@ const app = express()
 
 
 // middleware 
-app.use(cors())
+app.use(cors({origin:'https://final-assignment-5fbe7.web.app'}))
 app.use(express.json())
 
 const jwtVerify = (req, res, next) => {
