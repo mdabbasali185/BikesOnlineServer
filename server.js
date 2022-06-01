@@ -125,7 +125,7 @@ async function run() {
         app.post('/jwt-generator', async (req, res) => {
             const email = req.body.email
             const result = await userCollection.findOne({ email })
-            const token = jwt.sign({ email, role: result.role || "user" }, process.env.TOKEN_SECRETE);
+            const token = jwt.sign({ email, role: result?.role || "user" }, process.env.TOKEN_SECRETE);
             res.send(token)
         })
 
@@ -139,8 +139,25 @@ async function run() {
             const itemUpdated = await userCollection.updateOne(filter, updated, { upsert: true })
             res.send(itemUpdated)
         })
+        app.get('/user', jwtVerify, async (req, res) => {
+            const { email } = req.decoded
+            const result = await userCollection.findOne({ email })
+            res.send(result)
+        })
+
         app.get(`/users`, async (req, res) => {
             const result = await userCollection.find().toArray()
+            res.send(result)
+        })
+
+        //past a single user
+        app.post('/user', jwtVerify, async (req, res) => {
+            const { email } = req.decoded
+            const data = req.body
+            data.email = email
+            const filter = { email }
+            const updated = { $set: data }
+            const result = await userCollection.updateOne(filter, updated, { upsert: true })
             res.send(result)
         })
 
@@ -193,6 +210,15 @@ async function run() {
 
         })
 
+        // get user all order
+        app.get('/my-items', jwtVerify, async (req, res) => {
+            const email = req.decoded.email
+           
+            const filter = { email }
+            const result = await orderCollection.find(filter).toArray()
+            res.send(result)
+        })
+
 
         app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id
@@ -201,9 +227,6 @@ async function run() {
             res.status(200).send(result)
 
         })
-
-
-
 
 
 
