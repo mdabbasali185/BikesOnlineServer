@@ -30,7 +30,6 @@ app.get('/jwt-decoded', jwtVerify, (req, res) => {
     const decoded = req.decoded
 
     res.send(decoded)
-    console.log(decoded)
 })
 
 
@@ -126,7 +125,6 @@ async function run() {
         app.post('/jwt-generator', async (req, res) => {
             const email = req.body.email
             const result = await userCollection.findOne({ email })
-            console.log(result)
             const token = jwt.sign({ email, role: result.role || "user" }, process.env.TOKEN_SECRETE);
             res.send(token)
         })
